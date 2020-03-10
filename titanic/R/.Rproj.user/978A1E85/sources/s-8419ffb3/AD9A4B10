@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1583169240890.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "AD9A4B10",
+    "lastKnownWriteTime" : 8319104482074261097,
+    "last_content_update" : 1583169240890,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "8CF3ABDD",
+        "caption" : "trainSet",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=trainSet&cache_key=8CF3ABDD",
+        "displayedObservations" : "891",
+        "environment" : "",
+        "expression" : "trainSet",
+        "object" : "trainSet",
+        "preview" : "0",
+        "totalObservations" : "891",
+        "variables" : "12"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

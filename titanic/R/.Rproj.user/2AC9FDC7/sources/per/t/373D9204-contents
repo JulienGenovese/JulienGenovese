@@ -1,0 +1,57 @@
+library(dplyr)
+library(randomForest)
+library(forecast)
+library(ggplot2)
+
+###load the dataset  ----
+
+trainSet<-read.csv2("./../input/train.csv",sep =",",stringsAsFactors = FALSE)
+testSet<-read.csv2("./../input/test.csv",sep=",")
+
+# try to work only with a part of the dataset
+
+X_train<-trainSet %>% select(c("Survived","Pclass","Sex","Age","SibSp","Fare","Embarked"))
+
+# converting data type ----
+
+X_train$Sex<- X_train$Sex %>% as.factor
+X_train$Pclass<- X_train$Pclass %>% as.factor
+X_train$Embarked<- X_train$Embarked %>% as.factor
+X_train$Age<-X_train$Age %>% as.numeric
+X_train$Survived <- X_train$Survived %>% as.factor
+X_train$Fare<-X_train$Fare %>% as.numeric
+
+# filling NA Values ----
+
+
+trainGrouped <- X_train %>% group_by(Sex,Pclass)
+summarise(trainGrouped, meanAge = mean(Age, na.rm = TRUE) , meadianAge = median(Age, na.rm = TRUE),numberOfNA = sum(is.na(Age)))
+trainGrouped <- X_train %>% group_by(Embarked)
+summarise(trainGrouped, meanAge = mean(Age, na.rm = TRUE) , meadianAge = median(Age, na.rm = TRUE), numberOfNA = sum(is.na(Age)))
+boxplot(Age ~ Pclass , data = X_train, xlab = "Pclass",   ylab = "Age", main = "Age")
+
+sum(is.na(X_train$Age))/sum(nrow(X_train))
+sum(is.na(X_train$Embarked))/sum(nrow(X_train))
+
+hist(trainGrouped$Age)
+# we try one tecnique
+
+X_train$Age[is.na(X_train$Age)]<- mean(X_train$Age[!is.na(X_train$Age)]) 
+
+### TRAIN AND TEST SPLIT ----
+set.seed(123)
+smp_size <- floor(0.8 * nrow(X_train)) # i split using 80% for learning and 20% to validate 
+
+train_ind <- sample(seq_len(nrow(X_train)), size = smp_size)
+
+learning <- X_train[train_ind, ]
+validation <- X_train[-train_ind, ]
+
+### VALIDATION OF MY MODEL ----
+
+
+fit_rf <- randomForest(Survived~. ,data = learning, ntree = 1000)
+
+pred<-predict(fit_rf,validation %>% select(-"Survived"))
+y_validation <- validation %>% select("Survived") %>% unlist
+length(which(pred == y_validation))/length(y_validation)

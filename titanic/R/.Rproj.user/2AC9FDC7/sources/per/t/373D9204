@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1581701309671.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3643772244",
+    "id" : "373D9204",
+    "lastKnownWriteTime" : 1582271096,
+    "last_content_update" : 1582271096432,
+    "path" : "C:/Users/200618162/OneDrive - Alstom/Kaggle/titanic/R/main.R",
+    "project_path" : "main.R",
+    "properties" : {
+        "cursorPosition" : "53,0",
+        "scrollLine" : "42",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

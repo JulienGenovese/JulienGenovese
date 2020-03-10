@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1583176338928.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3117A34",
+    "lastKnownWriteTime" : 1583783340,
+    "last_content_update" : 1583783340099,
+    "path" : "/cloud/project/titanic/R/main.R",
+    "project_path" : "main.R",
+    "properties" : {
+        "cursorPosition" : "7,11",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
