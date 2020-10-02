@@ -132,7 +132,15 @@ library(pls)
 plsFit <- plsr(Solubility ~ ., data = trainingData, ncomp = 15)
 plot(plsFit)
 ```
-With the option ncomp we can choose the number of components that we want
+With the option ncomp we ridgeRegFit <-
+  train(
+  solTrainXtrans,
+  solTrainY,
+  method = "ridge",
+  tuneGrid = ridgeGrid,
+  trControl = ctrl,
+  preProc = c("center", "scale")
+can choose the number of components that we want
 
 ```{r}
 predict(plsFit, solTestXtrans[1:5,], ncomp = 1:2)
@@ -142,6 +150,7 @@ This give us the results associated with two components.
 We can also use the caret package:
 ```{r}
 set.seed(100)
+
 plsTune <- train(solTrainXtrans, solTrainY,
                  method = "pls",
                  tuneLength = 200,
@@ -159,11 +168,18 @@ PENALIZED METHODS
 Let's begin with a ridge regression tuning it's lambda penalization:
 ```{r}
 ridgeGrid <- data.frame(.lambda = seq(0, .1, length = 15))
+library(doMC)
+registerDoMC(cores = 5)
 set.seed(100)
-ridgeRegFit <- train(solTrainXtrans, solTrainY,                                              method = "ridge",
-                     tuneGrid = ridgeGrid,
-                     trControl = ctrl,                                                       preProc = c("center", "scale")
-                     )
+ridgeRegFit <-
+  train(
+  solTrainXtrans,
+  solTrainY,
+  method = "ridge",
+  tuneGrid = ridgeGrid,
+  trControl = ctrl,
+  preProc = c("center", "scale")
+  )
 ridgeRegFit
 ```
 
@@ -177,9 +193,14 @@ And passing to the lasso:
 ```{r}
 fraction <- seq(0.01, 0.20, length = 100)
 set.seed(100)
-lassoRegFit <- train(solTrainXtrans, solTrainY,                                                 method = "enet",
-                     tuneGrid = expand.grid(fraction = fraction, lambda = 0),                        trControl = ctrl,                                                          preProc = c("center", "scale")
-                     )
+lassoRegFit <- train(
+  solTrainXtrans,
+  solTrainY,
+  method = "enet",
+  tuneGrid = expand.grid(fraction = fraction, lambda = 0),
+  trControl = ctrl,
+  preProc = c("center", "scale")
+  )
 lassoRegFit
 plot(lassoRegFit)
 ```
@@ -203,5 +224,41 @@ enetTune
 
 ```{r}
 plot(enetTune)
+```
+
+
+------------------------------
+Non linear methods: neural network
+-----------------------------
+
+
+
+```{r}
+library(doMC)
+registerDoMC(cores = 3)
+tooHigh <- findCorrelation(cor(solTrainXtrans), cutoff = .75)
+trainXnnet <- solTrainXtrans[,-tooHigh]
+testXnnet <- solTestXtrans[,-tooHigh]
+nnetGrid <- expand.grid(.decay = c(0.01, .1), # regularization parameter
+                        .size = c(1:10), # size for gradient descent
+                        .bag = FALSE) # use bagging for resampling
+
+ctrl <- trainControl(method = "cv", number = 10)
+
+set.seed(100)
+nnetTune <- train(
+  solTrainXtrans,
+  solTrainY,
+  method = "avNNet",
+  tuneGrid = nnetGrid,
+  trControl = ctrl,
+  preProc = c("center", "scale"), # center and scale 
+  linout = TRUE, # we want a regression model
+  trace = FALSE, # less output printed
+  MaxNWts = 6 * (ncol(trainXnnet) + 1) + 6 + 1, # 6 hidden layers
+  maxit = 500
+)
+print(nnetTune)
+plot(nnetTune)
 ```
 

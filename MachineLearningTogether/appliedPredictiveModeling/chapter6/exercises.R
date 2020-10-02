@@ -20,17 +20,17 @@ pcaObject <- prcomp(absorp,
                     )
 percentVariance <- pcaObject$sd^2/sum(pcaObject$sd^2)*100
 plot(percentVariance)
+percentVariance[1:5] # i think that 1 is enough but it's only a linear method
+
 varexp <- cumsum(percentVariance)
 which(varexp >= 99.999999)
 plot(varexp)
-# i think that 20 is enough
 
 ### 3) select from different models 
 
 data <- data.frame(endpoints[,2], absorp)
 names(data)[1] <- "fat"
 
-nzr <- nearZeroVar(data, saveMetrics = TRUE)
 hist(data$fat)
 
 colSums(is.na(data))
@@ -76,7 +76,7 @@ plsTune <- train(fat ~ .,
                  trControl = ctrl,
                  preProc = c("center", "scale")
 )
-
+varImp(plsTune)
 enetGrid <- expand.grid(.lambda = c(0, 0.01, .1),
                         .fraction = seq(.05, 1, length = 20)
 )
@@ -89,11 +89,37 @@ enetTune <- train(fat ~ .,
                   preProc = c("center", "scale")
 )
 
+nnetGrid <- expand.grid(.decay = c(0., 0.01, .1), # regularization parameter
+                        .size = c(1:10), # size for gradient descent
+                        .bag = FALSE) # use bagging for resampling
+set.seed(101)
+nnetTune <- train(
+  fat ~ .,
+  data = trainingData,
+  method = "avNNet",
+  tuneGrid = nnetGrid,
+  trControl = ctrl,
+  preProc = c("center", "scale"), # center and scale 
+  linout = TRUE, # we want a regression model
+  trace = FALSE, # less output printed
+  MaxNWts = 3 * (ncol(trainingData) + 1) + 3 + 1, # 3 hidden layers
+  maxit = 500
+)
+plot(nnetTune)
+
+
 resamp <- resamples(list(linear = lmFit, 
                          linearPCA = lmFitPCA,
                          linearePLS = plsTune,
                          linearRobust = rlmPCA,
                          elasticNet = enetTune))
+                         #neuralNet = nnetTune))
+bwplot(resamp)
+
+resamp <- resamples(list(
+                         linearePLS = plsTune,
+                         elasticNet = enetTune,
+                         neuralNet = nnetTune))
 bwplot(resamp)
 
 # I would choose the PLS because it's the easier model and is very good for 
@@ -191,7 +217,22 @@ enetTune <- train(permeability~ .,
                   trControl = ctrl,
                   preProc = c("center", "scale")
 )
-
+set.seed(101)
+nnetGrid <- expand.grid(.decay = c(0., 0.01, .1), # regularization parameter
+                        .size = c(1:10), # size for gradient descent
+                        .bag = FALSE) # use bagging for resampling
+nnetTune <- train(
+  permeability~ .,
+  data = trainingData,
+  method = "avNNet",
+  tuneGrid = nnetGrid,
+  trControl = ctrl,
+  preProc = c("center", "scale"), # center and scale 
+  linout = TRUE, # we want a regression model
+  trace = FALSE, # less output printed
+  MaxNWts = 8 * (ncol(trainingData) + 1) + 8 + 1, # 3 hidden layers
+  maxit = 500
+)
 resamp <- resamples(list(linearPCA = lmFitPCA,
                          linearePLS = plsTune,
                          linearRobust = rlmPCA,
@@ -230,7 +271,7 @@ testPredictors <- predictors[-trainingRows,]
 testYield <- yield[-trainingRows]
 
 #Pre-process trainPredictors and apply to trainPredictors and testPredictors
-pp <- preProcess(trainPredictors,method = c("center","scale","knnImpute"))
+pp <- preProcess(trainPredictors, method = c("center","scale", "knnImpute"))
 ppTrainPredictors <- predict(pp, trainPredictors)
 ppTestPredictors <- predict(pp, testPredictors)
 
