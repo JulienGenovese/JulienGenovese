@@ -8,7 +8,7 @@ Usually these projects are explained during my Meetup Conferences with Machine L
 
 If you have any doubts contact me at juliengenovese@hotmail.it .
 
-Good bye Guys!:clap:
+Good bye Folks!:clap:
 
 
 
