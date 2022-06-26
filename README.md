@@ -9,6 +9,7 @@ In particular you can find a complete tutorial on:
 - the Titanic Dataset: balanced classification problem.
 - US Adult Census dataset: imbalanced classification problem.
 - graph analysis with Spark
+- a complete tutorial on GNN with Pytorch geometric
 
 In addition you will find:
 -  a batch gradient descent with early stopping for softmax regression.
