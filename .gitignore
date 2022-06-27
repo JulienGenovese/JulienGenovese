@@ -2,3 +2,13 @@
 .RData
 /imbalanced_problems_APM/datasets/
 
+*.pt
+*.allx
+*.ally
+*.graph
+*.index
+*.tx
+*.ty
+*.x
+*.y
+*.csv
