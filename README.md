@@ -11,8 +11,6 @@ In particular, you can find a complete tutorial on classical use cases but with 
 - Graph analysis with Spark
 - A complete tutorial on GNN with Pytorch geometric
 - A fraud detection problem with a graph approach
-- A Neo4j Introduction
-
 In addition, you will find:
 -  a batch gradient descent with early stopping for softmax regression.
 
